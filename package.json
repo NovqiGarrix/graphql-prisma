@@ -1,0 +1,41 @@
+{
+  "name": "graphql-auth",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "tsnd --exit-child --transpile-only src/index.ts",
+    "start": "node build/index.js",
+    "build": "tsc && tsc-alias"
+  },
+  "devDependencies": {
+    "@types/compression": "^1.7.2",
+    "@types/cookie-parser": "^1.4.3",
+    "@types/express": "^4.17.13",
+    "@types/jsonwebtoken": "^8.5.8",
+    "@types/module-alias": "^2.0.1",
+    "@types/node": "^17.0.35",
+    "prisma": "^3.14.0",
+    "ts-node-dev": "^2.0.0",
+    "tsc-alias": "^1.6.7",
+    "typescript": "^4.7.2"
+  },
+  "dependencies": {
+    "@prisma/client": "^3.14.0",
+    "apollo-server-express": "^3.8.1",
+    "argon2": "^0.28.5",
+    "compression": "^1.7.4",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dayjs": "^1.11.2",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "graphql": "^15.3.0",
+    "jsonwebtoken": "^8.5.1",
+    "module-alias": "^2.2.2",
+    "pino": "^7.11.0",
+    "pino-pretty": "^7.6.1",
+    "reflect-metadata": "^0.1.13",
+    "type-graphql": "^1.1.1"
+  }
+}
