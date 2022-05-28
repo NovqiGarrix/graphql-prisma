@@ -7,7 +7,6 @@ import { LoginInput, RegisterInput } from '@src/services/user.service';
 
 import { User } from '@prisma/client';
 import createError from '@src/utils/createError';
-import jwt from '@src/utils/jwt';
 import { createAccessTokenCookie } from '@src/utils/createCookie';
 
 export type IUserResponse = Res<Omit<User, 'password' | 'uuid'> | null>
@@ -16,7 +15,7 @@ export type IUserResponse = Res<Omit<User, 'password' | 'uuid'> | null>
 export class UserResponse implements IUserResponse {
 
     @Field(() => UserModel, { nullable: true })
-    data!: Omit<User, 'password' | 'uuid'> | null;
+    data?: Omit<User, 'password' | 'uuid'>;
 
     @Field(() => String, { nullable: true })
     error?: string;
@@ -29,28 +28,20 @@ export class UserResponse implements IUserResponse {
 class UserResolver {
 
     @Query(() => UserResponse)
-    async getUser(
-        @Ctx() { req, prisma }: IContext,
+    async me(
+        @Ctx() { res, prisma }: IContext,
     ): Promise<UserResponse> {
         try {
 
-            const access_token = req.cookies['access_token']
-            if (!access_token) return {
-                error: "Hmm... Server said that you're not logged in yet!",
-                data: null
-            }
-
-            const isValid = jwt.verifyJWT<{ email: string }>(access_token);
-            if (!isValid) return {
+            const { email } = res.locals
+            if (!email) return {
                 error: "Hmm... Server said that you're identity is unknown!",
-                data: null
             }
 
-            const { email } = isValid
             const user = await prisma.user.findFirst({ where: { email } });
 
             return {
-                data: user
+                data: user ?? undefined
             }
 
         } catch (error: any) {
@@ -100,7 +91,7 @@ class UserResolver {
 
             const user = await prisma.user.findFirst({ where: { username: input.username } });
             if (!user) {
-                const response: UserResponse = { error: "Invalid username or password!", data: null };
+                const response: UserResponse = { error: "Invalid username or password!" };
                 return {
                     ...response, access_token: ""
                 }
@@ -108,7 +99,7 @@ class UserResolver {
 
             const validPassword = await argon.verify(user.password, input.password);
             if (!validPassword) {
-                const response: UserResponse = { error: "Invalid username or password!", data: null };
+                const response: UserResponse = { error: "Invalid username or password!" };
                 return {
                     ...response, access_token: ""
                 }

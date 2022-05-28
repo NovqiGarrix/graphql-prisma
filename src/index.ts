@@ -14,6 +14,7 @@ import { buildSchema } from 'type-graphql';
 import { DbClient } from '@utils/prismaClient';
 import { UserResolver } from '@resolvers/index';
 import logger from './utils/logger';
+import parseToken from './middlewares/parseToken';
 
 const signals = ["SIGTERM", "SIGINT"];
 const PORT = +process.env.PORT! || 3001;
@@ -43,6 +44,9 @@ app.use(express.json());
             context: (ctx) => ({ ...ctx, prisma })
         })
 
+        app.get('/', (_req, res) => res.sendStatus(200));
+        app.use(parseToken);
+
         await apolloServer.start();
         apolloServer.applyMiddleware({ app });
 
@@ -55,7 +59,9 @@ app.use(express.json());
     } catch (error: any) {
         logger.error(error.message);
         await prisma.$disconnect();
-        if (_server) (_server as Server).close();
+        logger.warn("😿 Database disconnected due to error!");
+
+        if (_server) (_server as Server).close(() => logger.warn("Server disconnected due to error!"));
 
         process.exit(1);
     }

@@ -8,6 +8,6 @@ export interface IContext {
 }
 
 export interface Res<T> {
-    data: T
+    data?: T
     error?: string;
 }

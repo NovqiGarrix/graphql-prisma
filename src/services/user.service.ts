@@ -1,5 +1,7 @@
 import { Field, InputType } from 'type-graphql';
 
+// Containing complicated functions
+
 @InputType()
 export class RegisterInput {
 
