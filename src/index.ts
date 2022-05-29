@@ -22,6 +22,7 @@ const ORIGIN = process.env.ORIGIN || "http://localhost:3000";
 
 const app = express();
 const prisma = DbClient.getClient();
+logger.info(`🚀 Database Connected`);
 
 app.use(compressor());
 app.use(cors({ credentials: true, origin: [ORIGIN] }));
@@ -61,7 +62,7 @@ app.use(express.json());
         await prisma.$disconnect();
         logger.warn("😿 Database disconnected due to error!");
 
-        if (_server) (_server as Server).close(() => logger.warn("Server disconnected due to error!"));
+        if (_server) (_server as Server).close(() => logger.warn("😼 Server disconnected due to error!"));
 
         process.exit(1);
     }
